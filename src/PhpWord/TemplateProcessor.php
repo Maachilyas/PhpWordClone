@@ -758,12 +758,6 @@ class TemplateProcessor
      */
     public function save()
     {
-        if($this->_rels!=""){
-            $this->zipClass->addFromString('word/_rels/document.xml.rels', $this->_rels);
-        }
-        if($this->_types!=""){
-            $this->zipClass->addFromString('[Content_Types].xml', $this->_types);
-        }
         foreach ($this->tempDocumentHeaders as $index => $xml) {
             $this->savePartWithRels($this->getHeaderName($index), $xml);
         }
