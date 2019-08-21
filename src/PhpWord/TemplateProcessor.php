@@ -90,6 +90,15 @@ class TemplateProcessor
      * @var string[]
      */
     protected $tempDocumentNewImages = array();
+	
+	
+    /**
+     * Content of document rels (in XML format) of the temporary document.
+     *
+     * @var string
+     */
+    private $temporaryDocumentRels;
+
 
     /**
      * @since 0.12.0 Throws CreateTemporaryFileException and CopyFileException instead of Exception
@@ -129,6 +138,8 @@ class TemplateProcessor
         $this->tempDocumentMainPart = $this->readPartWithRels($this->getMainPartName());
         $this->tempDocumentSettingsPart = $this->readPartWithRels($this->getSettingsPartName());
         $this->tempDocumentContentTypes = $this->zipClass->getFromName($this->getDocumentContentTypesName());
+		$this->temporaryDocumentRels = $this->zipClass->getFromName('word/_rels/document.xml.rels');
+
     }
 
     /**
@@ -1281,5 +1292,22 @@ class TemplateProcessor
 
     public function setImageValueAlt($searchAlt, $replace){
         $this->setImageValue2($this->getImgFileName($this->seachImagerId($searchAlt)),$replace);
+    }
+	/**
+     * Set a new image
+     *
+     * @param string $search
+     * @param string $replace
+     */
+    public function setImageValue2($search, $replace){
+        // Sanity check
+        if (!file_exists($replace))
+        {
+            return;
+        }
+        // Delete current image
+        $this->zipClass->deleteName('word/media/' . $search);
+        // Add a new one
+        $this->zipClass->addFile($replace, 'word/media/' . $search);
     }
 }
